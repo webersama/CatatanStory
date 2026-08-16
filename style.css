@@ -4,6 +4,10 @@
   --glow-color: #00ffff;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: var(--main-font);
@@ -45,7 +49,7 @@ body {
   margin-top: 5px;
 }
 
-/* LOBBY DISPLAY */
+/* LOBBY GRID DISPLAY */
 .lobby-container {
   flex: 1;
   display: flex;
@@ -58,17 +62,19 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 20px;
   max-width: 900px;
+  width: 100%;
 }
 
 .lobby-card {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(var(--blur-val));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  padding: 25px;
-  width: 220px;
+  padding: 25px 15px;
+  width: 200px;
   text-align: center;
   cursor: pointer;
   transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
@@ -87,6 +93,7 @@ body {
 
 .lobby-card h3 {
   margin: 10px 0 5px 0;
+  font-size: 1.2rem;
 }
 
 .lobby-card p {
@@ -97,13 +104,13 @@ body {
 
 /* MODAL OVERLAY (POPUP MENU) */
 .modal-overlay {
-  display: none;
+  display: none; /* tersembunyi secara default */
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.75);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
   z-index: 1000;
   justify-content: center;
@@ -111,7 +118,7 @@ body {
 }
 
 .modal-container {
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(15, 23, 42, 0.95);
   border: 1px solid var(--glow-color);
   box-shadow: 0 0 25px var(--glow-color);
   border-radius: 16px;
@@ -137,6 +144,7 @@ body {
   border: none;
   color: #fff;
   font-size: 2rem;
+  width: auto;
   cursor: pointer;
 }
 
@@ -161,22 +169,32 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-input, select, textarea, button {
-  margin: 5px 0;
-  padding: 8px;
+.modal-container input, 
+.modal-container select, 
+.modal-container textarea {
+  margin: 5px 0 15px 0;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid #444;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   width: 100%;
-  box-sizing: border-box;
 }
 
-button {
+.modal-container button {
   cursor: pointer;
   background: var(--glow-color);
   color: #000;
   font-weight: bold;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  margin: 5px 0;
+}
+
+.bg-options button {
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 
 #paintCanvas {
