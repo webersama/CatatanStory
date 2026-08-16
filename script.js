@@ -80,7 +80,7 @@ function renderTabunganChart(data) {
 }
 renderTabungan();
 
-// 3. Catatan & Drawing & Foto
+// 3. Catatan & Drawing
 let notes = JSON.parse(localStorage.getItem('notes_data')) || [];
 function saveNote() {
   const title = document.getElementById('note-title').value;
@@ -123,29 +123,93 @@ function draw(e) {
 function setEraser() { document.getElementById('brush-color').value = '#ffffff'; }
 function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-// Photo Upload (Up to 100 Photos)
+// Photo Upload, Edit, & Delete Logic (Maks 100 Foto)
 let photos = JSON.parse(localStorage.getItem('user_photos')) || [];
-function uploadPhoto(e) {
-  if (photos.length >= 100) return alert('Batas 100 foto tercapai!');
-  const file = e.target.files[0];
+
+function uploadPhoto() {
+  if (photos.length >= 100) return alert('Batas 100 foto tersimpan sudah tercapai!');
+  
+  const fileInput = document.getElementById('photo-input');
+  const captionInput = document.getElementById('photo-caption-input');
+  const file = fileInput.files[0];
+
+  if (!file) return alert('Pilih foto terlebih dahulu!');
+
   const reader = new FileReader();
   reader.onloadend = () => {
-    photos.push(reader.result);
+    photos.push({
+      id: Date.now(),
+      src: reader.result,
+      caption: captionInput.value || 'Tanpa Keterangan'
+    });
     localStorage.setItem('user_photos', JSON.stringify(photos));
+    fileInput.value = '';
+    captionInput.value = '';
     renderPhotos();
   };
-  if (file) reader.readAsDataURL(file);
+  reader.readAsDataURL(file);
 }
+
 function renderPhotos() {
   const gallery = document.getElementById('photo-gallery');
   gallery.innerHTML = '';
-  photos.forEach(src => {
-    const img = document.createElement('img');
-    img.src = src;
-    gallery.appendChild(img);
+
+  photos.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+
+    card.innerHTML = `
+      <img src="${item.src}" alt="Foto">
+      <div class="photo-caption">${item.caption}</div>
+      <div class="photo-actions">
+        <button class="btn-edit" onclick="editPhoto(${index})">Edit</button>
+        <button class="btn-delete" onclick="deletePhoto(${index})">Hapus</button>
+      </div>
+    `;
+
+    gallery.appendChild(card);
   });
+
   document.getElementById('photo-count').innerText = photos.length;
 }
+
+function deletePhoto(index) {
+  if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
+    photos.splice(index, 1);
+    localStorage.setItem('user_photos', JSON.stringify(photos));
+    renderPhotos();
+  }
+}
+
+function editPhoto(index) {
+  const newCaption = prompt('Edit keterangan foto:', photos[index].caption);
+  if (newCaption !== null) {
+    photos[index].caption = newCaption;
+    
+    if (confirm('Apakah kamu juga ingin mengganti gambar foto ini?')) {
+      const tempInput = document.createElement('input');
+      tempInput.type = 'file';
+      tempInput.accept = 'image/*';
+      tempInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            photos[index].src = reader.result;
+            localStorage.setItem('user_photos', JSON.stringify(photos));
+            renderPhotos();
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      tempInput.click();
+    } else {
+      localStorage.setItem('user_photos', JSON.stringify(photos));
+      renderPhotos();
+    }
+  }
+}
+
 renderPhotos();
 
 // 4. Kalori & Makanan System
