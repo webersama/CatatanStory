@@ -91,15 +91,56 @@ button {
   cursor: crosshair;
 }
 
+/* Galeri Foto Styling */
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 15px;
+  margin-top: 15px;
 }
 
-.gallery img {
-  width: 100px;
-  height: 100px;
+.photo-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  width: 140px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.photo-card img {
+  width: 100%;
+  height: 120px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 6px;
+}
+
+.photo-caption {
+  font-size: 12px;
+  margin: 6px 0;
+  word-break: break-word;
+  color: #ddd;
+}
+
+.photo-actions {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
+.photo-actions button {
+  font-size: 11px;
+  padding: 4px 8px;
+  margin: 0;
+}
+
+.btn-edit {
+  background: #f1c40f;
+  color: #000;
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: #fff;
 }
