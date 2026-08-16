@@ -1,0 +1,105 @@
+:root {
+  --main-font: 'Segoe UI', sans-serif;
+  --blur-val: 10px;
+  --glow-color: #00ffff;
+}
+
+body {
+  margin: 0;
+  font-family: var(--main-font);
+  background: #0f172a url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#cursor-glow {
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  opacity: 0.25;
+  transition: width 0.2s, height 0.2s;
+  z-index: 9999;
+}
+
+header {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(var(--blur-val));
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--glow-color);
+}
+
+nav button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid transparent;
+  color: white;
+  padding: 8px 16px;
+  margin: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+nav button:hover {
+  border-color: var(--glow-color);
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.tab-content {
+  display: none;
+  padding: 20px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--blur-val));
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+input, select, textarea, button {
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+
+button {
+  cursor: pointer;
+  background: var(--glow-color);
+  color: #000;
+  font-weight: bold;
+}
+
+#paintCanvas {
+  background: #fff;
+  border-radius: 8px;
+  cursor: crosshair;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gallery img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
