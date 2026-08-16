@@ -108,7 +108,11 @@
 
       <div class="card">
         <h3>Galeri Foto (Maks 100 Foto)</h3>
-        <input type="file" id="photo-input" accept="image/*" onchange="uploadPhoto(event)">
+        <div class="upload-box">
+          <input type="file" id="photo-input" accept="image/*">
+          <input type="text" id="photo-caption-input" placeholder="Keterangan foto (opsional)">
+          <button onclick="uploadPhoto()">Tambah Foto</button>
+        </div>
         <p><span id="photo-count">0</span> / 100 foto tersimpan</p>
         <div id="photo-gallery" class="gallery"></div>
       </div>
