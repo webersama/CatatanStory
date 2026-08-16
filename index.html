@@ -3,201 +3,734 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WiberMenu</title>
-  <link rel="stylesheet" href="style.css">
+  <title>WiberMenu Portal</title>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    :root {
+      --main-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --blur-val: 10px;
+      --glow-color: #ffee00;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--main-font);
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background-size: cover;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #fff;
+    }
+
+    #cursor-glow {
+      position: fixed;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      opacity: 0.2;
+      transition: width 0.2s, height 0.2s;
+      z-index: 9999;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ffffff;
+      margin-bottom: 25px;
+      font-size: 2rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* LOBBY GRID (TAMPILAN TENGAH PERSIS SEPERTI GAMBAR) */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .menu-card {
+      background-color: #ffffff;
+      color: #000000;
+      padding: 20px 15px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .menu-card:hover, .menu-card:active {
+      background-color: #ffee00;
+      color: #000000;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(255, 238, 0, 0.4);
+      border-color: #ffd700;
+    }
+
+    .menu-card i {
+      font-size: 1.2rem;
+    }
+
+    /* MODAL POPUP STYLING */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 15px;
+    }
+
+    .modal-content {
+      background-color: rgba(15, 23, 42, 0.95);
+      color: #ffffff;
+      border: 1px solid var(--glow-color);
+      box-shadow: 0 0 25px rgba(0,0,0,0.7);
+      padding: 25px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+      text-align: left;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: var(--glow-color);
+    }
+
+    .modal-title {
+      margin-bottom: 15px;
+      color: #ffffff;
+      border-bottom: 2px solid var(--glow-color);
+      padding-bottom: 8px;
+    }
+
+    /* FORM CONTROLS IN MODAL */
+    .card-inner {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(var(--blur-val));
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+    }
+
+    button.btn-submit {
+      width: 100%;
+      background-color: var(--glow-color);
+      color: #000;
+      font-weight: bold;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button.btn-submit:hover {
+      opacity: 0.9;
+    }
+
+    /* GALLERY STYLING */
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .photo-card {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 8px;
+      width: 130px;
+      text-align: center;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .photo-caption {
+      font-size: 11px;
+      margin: 5px 0;
+      word-break: break-word;
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .photo-actions button {
+      font-size: 10px;
+      padding: 3px 6px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #paintCanvas {
+      background: #ffffff;
+      border-radius: 8px;
+      cursor: crosshair;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
+
   <div id="cursor-glow"></div>
-  
-  <header class="main-header">
-    <h1>WiberMenu</h1>
-    <p>Pilih menu di bawah untuk membuka fitur</p>
-  </header>
 
-  <!-- LOBBY UTAMA -->
-  <main class="lobby-container">
-    <div class="lobby-grid">
-      <div class="lobby-card" onclick="openMenu('ewallet')">
-        <div class="icon">💳</div>
-        <h3>E-Wallet</h3>
-        <p>Tracking saldo DANA</p>
+  <div class="container">
+    <h1><i class="fa-solid fa-layer-group"></i> WiberMenu Lobby</h1>
+    
+    <!-- LOBBY GRID MENU (9 TOMBOL PUTIH RAPI) -->
+    <div class="menu-grid">
+      <div class="menu-card" onclick="openModal('modal-ewallet')">
+        <i class="fa-solid fa-wallet"></i> E-Wallet (DANA)
       </div>
-
-      <div class="lobby-card" onclick="openMenu('tabungan')">
-        <div class="icon">💰</div>
-        <h3>Tabungan</h3>
-        <p>Setor, tarik & grafik bulanan</p>
+      <div class="menu-card" onclick="openModal('modal-tabungan')">
+        <i class="fa-solid fa-piggy-bank"></i> Tabungan & Grafik
       </div>
-
-      <div class="lobby-card" onclick="openMenu('catatan')">
-        <div class="icon">📝</div>
-        <h3>Catatan & Galeri</h3>
-        <p>Catatan, menggambar & galeri foto</p>
+      <div class="menu-card" onclick="openModal('modal-catatan')">
+        <i class="fa-solid fa-pen-to-square"></i> Catatan & Galeri
       </div>
-
-      <div class="lobby-card" onclick="openMenu('kalori')">
-        <div class="icon">🍎</div>
-        <h3>Track Kalori</h3>
-        <p>Riwayat & grafik makanan</p>
+      <div class="menu-card" onclick="openModal('modal-kalori')">
+        <i class="fa-solid fa-utensils"></i> Track Kalori
       </div>
-
-      <div class="lobby-card" onclick="openMenu('tampilan')">
-        <div class="icon">🎨</div>
-        <h3>Tampilan</h3>
-        <p>Ubah background, font & efek neon</p>
+      <div class="menu-card" onclick="openModal('modal-tampilan')">
+        <i class="fa-solid fa-palette"></i> Ubah Tampilan
       </div>
-    </div>
-  </main>
-
-  <!-- POP-UP OVERLAY -->
-  <div id="modal-overlay" class="modal-overlay">
-    <div class="modal-container">
-      <button class="btn-close" onclick="closeMenu()">&times;</button>
-
-      <!-- 1. E-WALLET -->
-      <section id="ewallet" class="tab-content">
-        <h2>Tracking E-Wallet (DANA)</h2>
-        <div class="card">
-          <label>Saldo DANA saat ini (IDR):</label>
-          <input type="number" id="dana-saldo" placeholder="Masukkan saldo DANA">
-          <button type="button" onclick="saveSaldoDana()">Update Saldo</button>
-          <h3>Saldo Terbaca: <span id="display-dana">Rp 0</span></h3>
-        </div>
-      </section>
-
-      <!-- 2. TABUNGAN -->
-      <section id="tabungan" class="tab-content">
-        <h2>Menu Tabungan</h2>
-        <div class="card">
-          <input type="text" id="tab-alasan" placeholder="Alasan / Target Nabung">
-          <input type="number" id="tab-nominal" placeholder="Nominal (Rp)">
-          <select id="tab-tipe">
-            <option value="setor">Setor Uang</option>
-            <option value="tarik">Tarik Uang</option>
-          </select>
-          <select id="tab-bulan">
-            <option value="Semua">Semua Bulan</option>
-            <option value="Januari">Januari</option>
-            <option value="Februari">Februari</option>
-            <option value="Maret">Maret</option>
-            <option value="April">April</option>
-            <option value="Mei">Mei</option>
-            <option value="Juni">Juni</option>
-            <option value="Juli">Juli</option>
-            <option value="Agustus">Agustus</option>
-            <option value="September">September</option>
-            <option value="Oktober">Oktober</option>
-            <option value="November">November</option>
-            <option value="Desember">Desember</option>
-          </select>
-          <button type="button" onclick="addTransaksiTabungan()">Tambah Transaksi</button>
-        </div>
-
-        <div class="card">
-          <h3>Filter & Total</h3>
-          <select id="filter-bulan" onchange="renderTabungan()">
-            <option value="Semua">Semua Bulan</option>
-            <option value="Januari">Januari</option>
-            <option value="Februari">Februari</option>
-            <option value="Maret">Maret</option>
-            <option value="April">April</option>
-            <option value="Mei">Mei</option>
-            <option value="Juni">Juni</option>
-            <option value="Juli">Juli</option>
-            <option value="Agustus">Agustus</option>
-            <option value="September">September</option>
-            <option value="Oktober">Oktober</option>
-            <option value="November">November</option>
-            <option value="Desember">Desember</option>
-          </select>
-          <h4>Total Saldo: <span id="total-tabungan">Rp 0</span></h4>
-          <ul id="list-tabungan"></ul>
-          <canvas id="chartTabungan"></canvas>
-        </div>
-      </section>
-
-      <!-- 3. CATATAN & FOTO -->
-      <section id="catatan" class="tab-content">
-        <h2>Catatan & Canvas</h2>
-        <div class="card">
-          <h3>Tulis Catatan</h3>
-          <input type="text" id="note-title" placeholder="Judul Catatan">
-          <textarea id="note-body" placeholder="Isi catatan..."></textarea>
-          <button type="button" onclick="saveNote()">Simpan Catatan</button>
-          <div id="notes-list"></div>
-        </div>
-
-        <div class="card">
-          <h3>Menggambar</h3>
-          <div class="controls">
-            <input type="color" id="brush-color" value="#ffffff">
-            <input type="range" id="brush-size" min="1" max="50" value="5">
-            <button type="button" onclick="setEraser()">Hapus (Eraser)</button>
-            <button type="button" onclick="clearCanvas()">Bersihkan Canvas</button>
-          </div>
-          <canvas id="paintCanvas" width="600" height="300"></canvas>
-        </div>
-
-        <div class="card">
-          <h3>Galeri Foto (Maks 100 Foto)</h3>
-          <div class="upload-box">
-            <input type="file" id="photo-input" accept="image/*">
-            <input type="text" id="photo-caption-input" placeholder="Keterangan foto (opsional)">
-            <button type="button" onclick="uploadPhoto()">Tambah Foto</button>
-          </div>
-          <p><span id="photo-count">0</span> / 100 foto tersimpan</p>
-          <div id="photo-gallery" class="gallery"></div>
-        </div>
-      </section>
-
-      <!-- 4. TRACK KALORI -->
-      <section id="kalori" class="tab-content">
-        <h2>Track Kalori & Makanan</h2>
-        <div class="card">
-          <input type="text" id="food-name" placeholder="Nama Makanan (misal: Ayam Bakar)">
-          <input type="number" id="food-cal" placeholder="Kalori (kcal)">
-          <input type="text" id="food-reason" placeholder="Alasan / Catatan">
-          <button type="button" onclick="addFood()">Tambah Makanan</button>
-        </div>
-        <div class="card">
-          <h3>Frekuensi Makanan Dibeli</h3>
-          <canvas id="chartKalori"></canvas>
-          <ul id="list-makanan"></ul>
-        </div>
-      </section>
-
-      <!-- 5. TAMPILAN -->
-      <section id="tampilan" class="tab-content">
-        <h2>Kustomisasi Tampilan</h2>
-        <div class="card">
-          <h3>Pilih Background (5 Pilihan)</h3>
-          <div class="bg-options">
-            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1518709268805-4e9042af9f23')">BG 1 (Cyberpunk)</button>
-            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')">BG 2 (Pantai)</button>
-            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1519681393784-d120267933ba')">BG 3 (Gunung)</button>
-            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1451187580459-43490279c0fa')">BG 4 (Space)</button>
-            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1534447677768-be436bb09401')">BG 5 (Minimalis)</button>
-          </div>
-
-          <h3>Efek Blur & Neon Cursor Glow</h3>
-          <label>Tingkat Blur Glassmorphism:</label>
-          <input type="range" id="blur-range" min="0" max="20" value="10" oninput="changeBlur(this.value)">
-          
-          <label>Warna Neon Light (Cursor/Glow):</label>
-          <input type="color" id="glow-color" value="#00ffff" onchange="changeGlowColor(this.value)">
-
-          <h3>Font Web</h3>
-          <select onchange="changeFont(this.value)">
-            <option value="sans-serif">Sans-Serif Classic</option>
-            <option value="'Courier New', monospace">Monospace Code</option>
-            <option value="'Segoe UI', sans-serif">Segoe UI Modern</option>
-          </select>
-        </div>
-      </section>
+      <a href="https://saweria.co" target="_blank" class="menu-card">
+        <i class="fa-solid fa-hand-holding-dollar"></i> Link Donate
+      </a>
+      <a href="https://discord.gg" target="_blank" class="menu-card">
+        <i class="fa-brands fa-discord"></i> Link Discord
+      </a>
+      <a href="https://chat.whatsapp.com" target="_blank" class="menu-card">
+        <i class="fa-brands fa-whatsapp"></i> Link WA Group
+      </a>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- 1. MODAL E-WALLET -->
+  <div id="modal-ewallet" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-ewallet')">&times;</span>
+      <h2 class="modal-title">Tracking Saldo DANA</h2>
+      <div class="card-inner">
+        <label>Input Saldo DANA Baru (Rp):</label>
+        <input type="number" id="dana-saldo" placeholder="Masukkan nominal saldo">
+        <button class="btn-submit" onclick="saveSaldoDana()">Update Saldo</button>
+      </div>
+      <div class="card-inner">
+        <h3>Saldo Terbaca: <span id="display-dana" style="color: var(--glow-color);">Rp 0</span></h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MODAL TABUNGAN -->
+  <div id="modal-tabungan" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-tabungan')">&times;</span>
+      <h2 class="modal-title">Menu Menabung & Grafik</h2>
+      <div class="card-inner">
+        <input type="text" id="tab-alasan" placeholder="Alasan / Target Nabung">
+        <input type="number" id="tab-nominal" placeholder="Nominal (Rp)">
+        <select id="tab-tipe">
+          <option value="setor">Setor Uang</option>
+          <option value="tarik">Tarik Uang</option>
+        </select>
+        <select id="tab-bulan">
+          <option value="Januari">Januari</option>
+          <option value="Februari">Februari</option>
+          <option value="Maret">Maret</option>
+          <option value="April">April</option>
+          <option value="Mei">Mei</option>
+          <option value="Juni">Juni</option>
+          <option value="Juli">Juli</option>
+          <option value="Agustus">Agustus</option>
+          <option value="September">September</option>
+          <option value="Oktober">Oktober</option>
+          <option value="November">November</option>
+          <option value="Desember">Desember</option>
+        </select>
+        <button class="btn-submit" onclick="addTransaksiTabungan()">Tambah Transaksi</button>
+      </div>
+
+      <div class="card-inner">
+        <h3>Filter & Total</h3>
+        <select id="filter-bulan" onchange="renderTabungan()">
+          <option value="Semua">Semua Bulan</option>
+          <option value="Januari">Januari</option>
+          <option value="Februari">Februari</option>
+          <option value="Maret">Maret</option>
+          <option value="April">April</option>
+          <option value="Mei">Mei</option>
+          <option value="Juni">Juni</option>
+          <option value="Juli">Juli</option>
+          <option value="Agustus">Agustus</option>
+          <option value="September">September</option>
+          <option value="Oktober">Oktober</option>
+          <option value="November">November</option>
+          <option value="Desember">Desember</option>
+        </select>
+        <h4>Total Saldo: <span id="total-tabungan" style="color: var(--glow-color);">Rp 0</span></h4>
+        <ul id="list-tabungan" style="margin-top: 10px; list-style: none;"></ul>
+        <div style="margin-top: 15px;">
+          <canvas id="chartTabungan"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MODAL CATATAN & GALERI -->
+  <div id="modal-catatan" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-catatan')">&times;</span>
+      <h2 class="modal-title">Catatan, Canvas & Galeri</h2>
+      
+      <div class="card-inner">
+        <h3>Tulis Catatan</h3>
+        <input type="text" id="note-title" placeholder="Judul Catatan">
+        <textarea id="note-body" rows="3" placeholder="Isi catatan..."></textarea>
+        <button class="btn-submit" onclick="saveNote()">Simpan Catatan</button>
+        <div id="notes-list"></div>
+      </div>
+
+      <div class="card-inner">
+        <h3>Menggambar (Canvas)</h3>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="color" id="brush-color" value="#000000" style="width:50px; padding:0; height:35px;">
+          <input type="range" id="brush-size" min="1" max="30" value="5">
+          <button type="button" onclick="clearCanvas()" style="padding: 5px 10px; background:#e74c3c; color:#fff; border:none; border-radius:4px; cursor:pointer;">Clear</button>
+        </div>
+        <canvas id="paintCanvas" width="500" height="200"></canvas>
+      </div>
+
+      <div class="card-inner">
+        <h3>Galeri Foto (Maks 100 Foto)</h3>
+        <input type="file" id="photo-input" accept="image/*">
+        <input type="text" id="photo-caption-input" placeholder="Keterangan foto">
+        <button class="btn-submit" onclick="uploadPhoto()">Tambah Foto</button>
+        <p style="margin-top: 8px; font-size: 12px;"><span id="photo-count">0</span> / 100 foto tersimpan</p>
+        <div id="photo-gallery" class="gallery"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MODAL KALORI -->
+  <div id="modal-kalori" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-kalori')">&times;</span>
+      <h2 class="modal-title">Track Kalori Makanan</h2>
+      <div class="card-inner">
+        <input type="text" id="food-name" placeholder="Nama Makanan">
+        <input type="number" id="food-cal" placeholder="Kalori (kcal)">
+        <input type="text" id="food-reason" placeholder="Catatan / Alasan">
+        <button class="btn-submit" onclick="addFood()">Tambah Makanan</button>
+      </div>
+      <div class="card-inner">
+        <h3>Frekuensi Makanan Dibeli</h3>
+        <canvas id="chartKalori"></canvas>
+        <ul id="list-makanan" style="margin-top:10px; list-style:none;"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MODAL TAMPILAN -->
+  <div id="modal-tampilan" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('modal-tampilan')">&times;</span>
+      <h2 class="modal-title">Kustomisasi Tampilan</h2>
+      <div class="card-inner">
+        <h3>Pilih Background (5 Pilihan)</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:8px;">
+          <button class="btn-submit" style="width:auto;" onclick="changeBg('https://images.unsplash.com/photo-1518709268805-4e9042af9f23')">Cyberpunk</button>
+          <button class="btn-submit" style="width:auto;" onclick="changeBg('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')">Pantai</button>
+          <button class="btn-submit" style="width:auto;" onclick="changeBg('https://images.unsplash.com/photo-1519681393784-d120267933ba')">Gunung</button>
+          <button class="btn-submit" style="width:auto;" onclick="changeBg('https://images.unsplash.com/photo-1451187580459-43490279c0fa')">Space</button>
+          <button class="btn-submit" style="width:auto;" onclick="changeBg('https://images.unsplash.com/photo-1534447677768-be436bb09401')">Minimalis</button>
+        </div>
+      </div>
+      <div class="card-inner">
+        <h3>Atur Glow Neon & Font</h3>
+        <label>Warna Neon Highlight:</label>
+        <input type="color" id="glow-color-picker" value="#ffee00" onchange="changeGlowColor(this.value)">
+        <label>Font Web:</label>
+        <select onchange="changeFont(this.value)">
+          <option value="'Segoe UI', sans-serif">Segoe UI</option>
+          <option value="monospace">Monospace</option>
+          <option value="sans-serif">Sans-Serif Classic</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT SYSTEM -->
+  <script>
+    // 1. NEON CURSOR GLOW
+    const cursorGlow = document.getElementById('cursor-glow');
+    document.addEventListener('mousemove', (e) => {
+      if (cursorGlow) {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+      }
+    });
+
+    // 2. MODAL CONTROL
+    function openModal(id) {
+      document.getElementById(id).style.display = 'flex';
+      if (id === 'modal-tabungan') renderTabungan();
+      if (id === 'modal-kalori') renderKalori();
+      if (id === 'modal-catatan') {
+        renderNotes();
+        renderGallery();
+        setTimeout(initCanvas, 100);
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    window.onclick = function(e) {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    };
+
+    // 3. E-WALLET (DANA)
+    function saveSaldoDana() {
+      const val = parseFloat(document.getElementById('dana-saldo').value) || 0;
+      localStorage.setItem('wiber_dana_saldo', val);
+      displayDana();
+      document.getElementById('dana-saldo').value = '';
+    }
+    function displayDana() {
+      const val = parseFloat(localStorage.getItem('wiber_dana_saldo')) || 0;
+      document.getElementById('display-dana').textContent = 'Rp ' + val.toLocaleString('id-ID');
+    }
+
+    // 4. TABUNGAN & CHART
+    let tabunganChart = null;
+    function addTransaksiTabungan() {
+      const alasan = document.getElementById('tab-alasan').value.trim();
+      const nominal = parseFloat(document.getElementById('tab-nominal').value) || 0;
+      const tipe = document.getElementById('tab-tipe').value;
+      const bulan = document.getElementById('tab-bulan').value;
+
+      if (!alasan || nominal <= 0) return alert('Isi alasan dan nominal!');
+
+      const list = JSON.parse(localStorage.getItem('wiber_tabungan')) || [];
+      list.push({ alasan, nominal, tipe, bulan, id: Date.now() });
+      localStorage.setItem('wiber_tabungan', JSON.stringify(list));
+
+      document.getElementById('tab-alasan').value = '';
+      document.getElementById('tab-nominal').value = '';
+      renderTabungan();
+    }
+
+    function deleteTabungan(id) {
+      let list = JSON.parse(localStorage.getItem('wiber_tabungan')) || [];
+      list = list.filter(item => item.id !== id);
+      localStorage.setItem('wiber_tabungan', JSON.stringify(list));
+      renderTabungan();
+    }
+
+    function renderTabungan() {
+      const list = JSON.parse(localStorage.getItem('wiber_tabungan')) || [];
+      const filterBulan = document.getElementById('filter-bulan').value;
+      const ul = document.getElementById('list-tabungan');
+      ul.innerHTML = '';
+
+      let totalSaldo = 0;
+      const monthlyData = {};
+
+      list.forEach(item => {
+        if (item.tipe === 'setor') totalSaldo += item.nominal;
+        else totalSaldo -= item.nominal;
+
+        if (!monthlyData[item.bulan]) monthlyData[item.bulan] = 0;
+        if (item.tipe === 'setor') monthlyData[item.bulan] += item.nominal;
+        else monthlyData[item.bulan] -= item.nominal;
+
+        if (filterBulan === 'Semua' || item.bulan === filterBulan) {
+          const li = document.createElement('li');
+          const color = item.tipe === 'setor' ? '#2ecc71' : '#e74c3c';
+          const prefix = item.tipe === 'setor' ? '+' : '-';
+          li.innerHTML = `[${item.bulan}] ${item.alasan}: <span style="color:${color}">${prefix}Rp ${item.nominal.toLocaleString('id-ID')}</span> 
+          <button onclick="deleteTabungan(${item.id})" style="background:#e74c3c; color:#fff; border:none; padding:2px 6px; border-radius:3px; cursor:pointer;">X</button>`;
+          ul.appendChild(li);
+        }
+      });
+
+      document.getElementById('total-tabungan').textContent = 'Rp ' + totalSaldo.toLocaleString('id-ID');
+
+      const ctx = document.getElementById('chartTabungan').getContext('2d');
+      if (tabunganChart) tabunganChart.destroy();
+      tabunganChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(monthlyData),
+          datasets: [{
+            label: 'Net Tabungan (Rp)',
+            data: Object.values(monthlyData),
+            backgroundColor: 'rgba(255, 238, 0, 0.6)',
+            borderColor: '#ffee00',
+            borderWidth: 1
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    // 5. CATATAN & CANVAS
+    function saveNote() {
+      const title = document.getElementById('note-title').value.trim();
+      const body = document.getElementById('note-body').value.trim();
+      if (!title || !body) return alert('Isi judul & catatan!');
+
+      const notes = JSON.parse(localStorage.getItem('wiber_notes')) || [];
+      notes.push({ title, body, id: Date.now() });
+      localStorage.setItem('wiber_notes', JSON.stringify(notes));
+
+      document.getElementById('note-title').value = '';
+      document.getElementById('note-body').value = '';
+      renderNotes();
+    }
+
+    function deleteNote(id) {
+      let notes = JSON.parse(localStorage.getItem('wiber_notes')) || [];
+      notes = notes.filter(n => n.id !== id);
+      localStorage.setItem('wiber_notes', JSON.stringify(notes));
+      renderNotes();
+    }
+
+    function renderNotes() {
+      const notes = JSON.parse(localStorage.getItem('wiber_notes')) || [];
+      const container = document.getElementById('notes-list');
+      container.innerHTML = '';
+      notes.forEach(n => {
+        const div = document.createElement('div');
+        div.style.background = 'rgba(0,0,0,0.4)';
+        div.style.padding = '8px';
+        div.style.borderRadius = '6px';
+        div.style.marginTop = '8px';
+        div.innerHTML = `<strong>${n.title}</strong><p style="font-size:13px; color:#ccc;">${n.body}</p>
+        <button onclick="deleteNote(${n.id})" style="background:#e74c3c; color:#fff; border:none; padding:2px 6px; border-radius:3px; font-size:10px; cursor:pointer; margin-top:4px;">Hapus</button>`;
+        container.appendChild(div);
+      });
+    }
+
+    let canvas, ctx, painting = false;
+    function initCanvas() {
+      canvas = document.getElementById('paintCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      canvas.onmousedown = (e) => { painting = true; draw(e); };
+      canvas.onmouseup = () => { painting = false; ctx.beginPath(); };
+      canvas.onmousemove = draw;
+    }
+
+    function draw(e) {
+      if (!painting) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = document.getElementById('brush-size').value;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = document.getElementById('brush-color').value;
+
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    function clearCanvas() {
+      if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // 6. GALERI FOTO
+    function uploadPhoto() {
+      const fileInput = document.getElementById('photo-input');
+      const captionInput = document.getElementById('photo-caption-input');
+      const gallery = JSON.parse(localStorage.getItem('wiber_gallery')) || [];
+
+      if (gallery.length >= 100) return alert('Maksimal 100 foto!');
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          gallery.push({ id: Date.now(), image: e.target.result, caption: captionInput.value.trim() || 'Foto' });
+          try {
+            localStorage.setItem('wiber_gallery', JSON.stringify(gallery));
+            fileInput.value = '';
+            captionInput.value = '';
+            renderGallery();
+          } catch(err) {
+            alert('File gambar terlalu besar!');
+          }
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    function deletePhoto(id) {
+      let gallery = JSON.parse(localStorage.getItem('wiber_gallery')) || [];
+      gallery = gallery.filter(p => p.id !== id);
+      localStorage.setItem('wiber_gallery', JSON.stringify(gallery));
+      renderGallery();
+    }
+
+    function renderGallery() {
+      const gallery = JSON.parse(localStorage.getItem('wiber_gallery')) || [];
+      const container = document.getElementById('photo-gallery');
+      document.getElementById('photo-count').textContent = gallery.length;
+      container.innerHTML = '';
+      gallery.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'photo-card';
+        div.innerHTML = `<img src="${p.image}"><div class="photo-caption">${p.caption}</div>
+        <div class="photo-actions"><button onclick="deletePhoto(${p.id})" style="background:#e74c3c; color:#fff;">Hapus</button></div>`;
+        container.appendChild(div);
+      });
+    }
+
+    // 7. KALORI
+    let kaloriChart = null;
+    function addFood() {
+      const name = document.getElementById('food-name').value.trim();
+      const cal = parseFloat(document.getElementById('food-cal').value) || 0;
+      const reason = document.getElementById('food-reason').value.trim();
+      if (!name || cal <= 0) return alert('Isi data makanan!');
+
+      const list = JSON.parse(localStorage.getItem('wiber_kalori')) || [];
+      list.push({ name, cal, reason, id: Date.now() });
+      localStorage.setItem('wiber_kalori', JSON.stringify(list));
+
+      document.getElementById('food-name').value = '';
+      document.getElementById('food-cal').value = '';
+      document.getElementById('food-reason').value = '';
+      renderKalori();
+    }
+
+    function renderKalori() {
+      const list = JSON.parse(localStorage.getItem('wiber_kalori')) || [];
+      const ul = document.getElementById('list-makanan');
+      ul.innerHTML = '';
+      const freqMap = {};
+
+      list.forEach(item => {
+        freqMap[item.name] = (freqMap[item.name] || 0) + 1;
+        const li = document.createElement('li');
+        li.innerHTML = `${item.name} - ${item.cal} kcal (${item.reason || '-'})`;
+        ul.appendChild(li);
+      });
+
+      const ctx = document.getElementById('chartKalori').getContext('2d');
+      if (kaloriChart) kaloriChart.destroy();
+      kaloriChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(freqMap),
+          datasets: [{
+            data: Object.values(freqMap),
+            backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#4bc0c0']
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+
+    // 8. KUSTOMISASI
+    function changeBg(url) {
+      document.body.style.backgroundImage = `url('${url}')`;
+      localStorage.setItem('wiber_bg', url);
+    }
+    function changeGlowColor(color) {
+      document.documentElement.style.setProperty('--glow-color', color);
+    }
+    function changeFont(font) {
+      document.body.style.fontFamily = font;
+    }
+
+    // LOAD INITIAL DATA
+    window.onload = function() {
+      displayDana();
+      const savedBg = localStorage.getItem('wiber_bg');
+      if (savedBg) document.body.style.backgroundImage = `url('${savedBg}')`;
+    };
+  </script>
 </body>
 </html>
