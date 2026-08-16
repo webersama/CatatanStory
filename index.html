@@ -15,7 +15,7 @@
     <p>Pilih menu di bawah untuk membuka fitur</p>
   </header>
 
-  <!-- LOBBY UTAMA (MENU DI TENGAH) -->
+  <!-- LOBBY UTAMA -->
   <main class="lobby-container">
     <div class="lobby-grid">
       <div class="lobby-card" onclick="openMenu('ewallet')">
@@ -50,7 +50,7 @@
     </div>
   </main>
 
-  <!-- POP-UP OVERLAY UNTUK SETIAP MENU -->
+  <!-- POP-UP OVERLAY -->
   <div id="modal-overlay" class="modal-overlay">
     <div class="modal-container">
       <button class="btn-close" onclick="closeMenu()">&times;</button>
@@ -61,7 +61,7 @@
         <div class="card">
           <label>Saldo DANA saat ini (IDR):</label>
           <input type="number" id="dana-saldo" placeholder="Masukkan saldo DANA">
-          <button onclick="saveSaldoDana()">Update Saldo</button>
+          <button type="button" onclick="saveSaldoDana()">Update Saldo</button>
           <h3>Saldo Terbaca: <span id="display-dana">Rp 0</span></h3>
         </div>
       </section>
@@ -91,7 +91,7 @@
             <option value="November">November</option>
             <option value="Desember">Desember</option>
           </select>
-          <button onclick="addTransaksiTabungan()">Tambah Transaksi</button>
+          <button type="button" onclick="addTransaksiTabungan()">Tambah Transaksi</button>
         </div>
 
         <div class="card">
@@ -117,14 +117,14 @@
         </div>
       </section>
 
-      <!-- 3. CATATAN & DRAWING & FOTO -->
+      <!-- 3. CATATAN & FOTO -->
       <section id="catatan" class="tab-content">
         <h2>Catatan & Canvas</h2>
         <div class="card">
           <h3>Tulis Catatan</h3>
           <input type="text" id="note-title" placeholder="Judul Catatan">
           <textarea id="note-body" placeholder="Isi catatan..."></textarea>
-          <button onclick="saveNote()">Simpan Catatan</button>
+          <button type="button" onclick="saveNote()">Simpan Catatan</button>
           <div id="notes-list"></div>
         </div>
 
@@ -133,8 +133,8 @@
           <div class="controls">
             <input type="color" id="brush-color" value="#ffffff">
             <input type="range" id="brush-size" min="1" max="50" value="5">
-            <button onclick="setEraser()">Hapus (Eraser)</button>
-            <button onclick="clearCanvas()">Bersihkan Canvas</button>
+            <button type="button" onclick="setEraser()">Hapus (Eraser)</button>
+            <button type="button" onclick="clearCanvas()">Bersihkan Canvas</button>
           </div>
           <canvas id="paintCanvas" width="600" height="300"></canvas>
         </div>
@@ -144,21 +144,21 @@
           <div class="upload-box">
             <input type="file" id="photo-input" accept="image/*">
             <input type="text" id="photo-caption-input" placeholder="Keterangan foto (opsional)">
-            <button onclick="uploadPhoto()">Tambah Foto</button>
+            <button type="button" onclick="uploadPhoto()">Tambah Foto</button>
           </div>
           <p><span id="photo-count">0</span> / 100 foto tersimpan</p>
           <div id="photo-gallery" class="gallery"></div>
         </div>
       </section>
 
-      <!-- 4. TRACK KALORI & MAKANAN -->
+      <!-- 4. TRACK KALORI -->
       <section id="kalori" class="tab-content">
         <h2>Track Kalori & Makanan</h2>
         <div class="card">
           <input type="text" id="food-name" placeholder="Nama Makanan (misal: Ayam Bakar)">
           <input type="number" id="food-cal" placeholder="Kalori (kcal)">
           <input type="text" id="food-reason" placeholder="Alasan / Catatan">
-          <button onclick="addFood()">Tambah Makanan</button>
+          <button type="button" onclick="addFood()">Tambah Makanan</button>
         </div>
         <div class="card">
           <h3>Frekuensi Makanan Dibeli</h3>
@@ -167,17 +167,17 @@
         </div>
       </section>
 
-      <!-- 5. TAMPILAN & THEME -->
+      <!-- 5. TAMPILAN -->
       <section id="tampilan" class="tab-content">
         <h2>Kustomisasi Tampilan</h2>
         <div class="card">
           <h3>Pilih Background (5 Pilihan)</h3>
           <div class="bg-options">
-            <button onclick="changeBg('https://images.unsplash.com/photo-1518709268805-4e9042af9f23')">BG 1 (Cyberpunk)</button>
-            <button onclick="changeBg('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')">BG 2 (Pantai)</button>
-            <button onclick="changeBg('https://images.unsplash.com/photo-1519681393784-d120267933ba')">BG 3 (Gunung)</button>
-            <button onclick="changeBg('https://images.unsplash.com/photo-1451187580459-43490279c0fa')">BG 4 (Space)</button>
-            <button onclick="changeBg('https://images.unsplash.com/photo-1534447677768-be436bb09401')">BG 5 (Minimalis)</button>
+            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1518709268805-4e9042af9f23')">BG 1 (Cyberpunk)</button>
+            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')">BG 2 (Pantai)</button>
+            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1519681393784-d120267933ba')">BG 3 (Gunung)</button>
+            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1451187580459-43490279c0fa')">BG 4 (Space)</button>
+            <button type="button" onclick="changeBg('https://images.unsplash.com/photo-1534447677768-be436bb09401')">BG 5 (Minimalis)</button>
           </div>
 
           <h3>Efek Blur & Neon Cursor Glow</h3>
