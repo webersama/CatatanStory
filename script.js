@@ -1,8 +1,21 @@
-// Navigation System
-function switchTab(tabId) {
+// Modal Overlay Navigation System
+function openMenu(menuId) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
+  document.getElementById(menuId).classList.add('active');
+  document.getElementById('modal-overlay').style.display = 'flex';
 }
+
+function closeMenu() {
+  document.getElementById('modal-overlay').style.display = 'none';
+}
+
+// Close modal when clicking outside of container
+window.onclick = function(event) {
+  const modal = document.getElementById('modal-overlay');
+  if (event.target === modal) {
+    closeMenu();
+  }
+};
 
 // Cursor Light Track Effect
 const cursorGlow = document.getElementById('cursor-glow');
