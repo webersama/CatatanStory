@@ -10,159 +10,193 @@
 <body>
   <div id="cursor-glow"></div>
   
-  <header>
+  <header class="main-header">
     <h1>WiberMenu</h1>
-    <nav>
-      <button onclick="switchTab('ewallet')">E-Wallet</button>
-      <button onclick="switchTab('tabungan')">Tabungan</button>
-      <button onclick="switchTab('catatan')">Catatan & Galeri</button>
-      <button onclick="switchTab('kalori')">Track Kalori</button>
-      <button onclick="switchTab('tampilan')">Tampilan</button>
-    </nav>
+    <p>Pilih menu di bawah untuk membuka fitur</p>
   </header>
 
-  <main>
-    <!-- 1. E-WALLET -->
-    <section id="ewallet" class="tab-content active">
-      <h2>Tracking E-Wallet (DANA)</h2>
-      <div class="card">
-        <label>Saldo DANA saat ini (IDR):</label>
-        <input type="number" id="dana-saldo" placeholder="Masukkan saldo DANA">
-        <button onclick="saveSaldoDana()">Update Saldo</button>
-        <h3>Saldo Terbaca: <span id="display-dana">Rp 0</span></h3>
-      </div>
-    </section>
-
-    <!-- 2. TABUNGAN -->
-    <section id="tabungan" class="tab-content">
-      <h2>Menu Tabungan</h2>
-      <div class="card">
-        <input type="text" id="tab-alasan" placeholder="Alasan / Target Nabung">
-        <input type="number" id="tab-nominal" placeholder="Nominal (Rp)">
-        <select id="tab-tipe">
-          <option value="setor">Setor Uang</option>
-          <option value="tarik">Tarik Uang</option>
-        </select>
-        <select id="tab-bulan">
-          <option value="Semua">Semua Bulan</option>
-          <option value="Januari">Januari</option>
-          <option value="Februari">Februari</option>
-          <option value="Maret">Maret</option>
-          <option value="April">April</option>
-          <option value="Mei">Mei</option>
-          <option value="Juni">Juni</option>
-          <option value="Juli">Juli</option>
-          <option value="Agustus">Agustus</option>
-          <option value="September">September</option>
-          <option value="Oktober">Oktober</option>
-          <option value="November">November</option>
-          <option value="Desember">Desember</option>
-        </select>
-        <button onclick="addTransaksiTabungan()">Tambah Transaksi</button>
+  <!-- LOBBY UTAMA (MENU DI TENGAH) -->
+  <main class="lobby-container">
+    <div class="lobby-grid">
+      <div class="lobby-card" onclick="openMenu('ewallet')">
+        <div class="icon">💳</div>
+        <h3>E-Wallet</h3>
+        <p>Tracking saldo DANA</p>
       </div>
 
-      <div class="card">
-        <h3>Filter & Total</h3>
-        <select id="filter-bulan" onchange="renderTabungan()">
-          <option value="Semua">Semua Bulan</option>
-          <option value="Januari">Januari</option>
-          <option value="Februari">Februari</option>
-          <option value="Maret">Maret</option>
-          <option value="April">April</option>
-          <option value="Mei">Mei</option>
-          <option value="Juni">Juni</option>
-          <option value="Juli">Juli</option>
-          <option value="Agustus">Agustus</option>
-          <option value="September">September</option>
-          <option value="Oktober">Oktober</option>
-          <option value="November">November</option>
-          <option value="Desember">Desember</option>
-        </select>
-        <h4>Total Saldo: <span id="total-tabungan">Rp 0</span></h4>
-        <ul id="list-tabungan"></ul>
-        <canvas id="chartTabungan"></canvas>
-      </div>
-    </section>
-
-    <!-- 3. CATATAN & DRAWING & FOTO -->
-    <section id="catatan" class="tab-content">
-      <h2>Catatan & Canvas</h2>
-      <div class="card">
-        <h3>Tulis Catatan</h3>
-        <input type="text" id="note-title" placeholder="Judul Catatan">
-        <textarea id="note-body" placeholder="Isi catatan..."></textarea>
-        <button onclick="saveNote()">Simpan Catatan</button>
-        <div id="notes-list"></div>
+      <div class="lobby-card" onclick="openMenu('tabungan')">
+        <div class="icon">💰</div>
+        <h3>Tabungan</h3>
+        <p>Setor, tarik & grafik bulanan</p>
       </div>
 
-      <div class="card">
-        <h3>Menggambar</h3>
-        <div class="controls">
-          <input type="color" id="brush-color" value="#ffffff">
-          <input type="range" id="brush-size" min="1" max="50" value="5">
-          <button onclick="setEraser()">Hapus (Eraser)</button>
-          <button onclick="clearCanvas()">Bersihkan Canvas</button>
-        </div>
-        <canvas id="paintCanvas" width="600" height="300"></canvas>
+      <div class="lobby-card" onclick="openMenu('catatan')">
+        <div class="icon">📝</div>
+        <h3>Catatan & Galeri</h3>
+        <p>Catatan, menggambar & galeri foto</p>
       </div>
 
-      <div class="card">
-        <h3>Galeri Foto (Maks 100 Foto)</h3>
-        <div class="upload-box">
-          <input type="file" id="photo-input" accept="image/*">
-          <input type="text" id="photo-caption-input" placeholder="Keterangan foto (opsional)">
-          <button onclick="uploadPhoto()">Tambah Foto</button>
-        </div>
-        <p><span id="photo-count">0</span> / 100 foto tersimpan</p>
-        <div id="photo-gallery" class="gallery"></div>
+      <div class="lobby-card" onclick="openMenu('kalori')">
+        <div class="icon">🍎</div>
+        <h3>Track Kalori</h3>
+        <p>Riwayat & grafik makanan</p>
       </div>
-    </section>
 
-    <!-- 4. TRACK KALORI & MAKANAN -->
-    <section id="kalori" class="tab-content">
-      <h2>Track Kalori & Makanan</h2>
-      <div class="card">
-        <input type="text" id="food-name" placeholder="Nama Makanan (misal: Ayam Bakar)">
-        <input type="number" id="food-cal" placeholder="Kalori (kcal)">
-        <input type="text" id="food-reason" placeholder="Alasan / Catatan">
-        <button onclick="addFood()">Tambah Makanan</button>
+      <div class="lobby-card" onclick="openMenu('tampilan')">
+        <div class="icon">🎨</div>
+        <h3>Tampilan</h3>
+        <p>Ubah background, font & efek neon</p>
       </div>
-      <div class="card">
-        <h3>Frekuensi Makanan Dibeli</h3>
-        <canvas id="chartKalori"></canvas>
-        <ul id="list-makanan"></ul>
-      </div>
-    </section>
-
-    <!-- 5. TAMPILAN & THEME -->
-    <section id="tampilan" class="tab-content">
-      <h2>Kustomisasi Tampilan</h2>
-      <div class="card">
-        <h3>Pilih Background (5 Pilihan)</h3>
-        <div class="bg-options">
-          <button onclick="changeBg('https://images.unsplash.com/photo-1518709268805-4e9042af9f23')">BG 1 (Cyberpunk)</button>
-          <button onclick="changeBg('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')">BG 2 (Pantai)</button>
-          <button onclick="changeBg('https://images.unsplash.com/photo-1519681393784-d120267933ba')">BG 3 (Gunung)</button>
-          <button onclick="changeBg('https://images.unsplash.com/photo-1451187580459-43490279c0fa')">BG 4 (Space)</button>
-          <button onclick="changeBg('https://images.unsplash.com/photo-1534447677768-be436bb09401')">BG 5 (Minimalis)</button>
-        </div>
-
-        <h3>Efek Blur & Neon Cursor Glow</h3>
-        <label>Tingkat Blur Glassmorphism:</label>
-        <input type="range" id="blur-range" min="0" max="20" value="10" oninput="changeBlur(this.value)">
-        
-        <label>Warna Neon Light (Cursor/Glow):</label>
-        <input type="color" id="glow-color" value="#00ffff" onchange="changeGlowColor(this.value)">
-
-        <h3>Font Web</h3>
-        <select onchange="changeFont(this.value)">
-          <option value="sans-serif">Sans-Serif Classic</option>
-          <option value="'Courier New', monospace">Monospace Code</option>
-          <option value="'Segoe UI', sans-serif">Segoe UI Modern</option>
-        </select>
-      </div>
-    </section>
+    </div>
   </main>
+
+  <!-- POP-UP OVERLAY UNTUK SETIAP MENU -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal-container">
+      <button class="btn-close" onclick="closeMenu()">&times;</button>
+
+      <!-- 1. E-WALLET -->
+      <section id="ewallet" class="tab-content">
+        <h2>Tracking E-Wallet (DANA)</h2>
+        <div class="card">
+          <label>Saldo DANA saat ini (IDR):</label>
+          <input type="number" id="dana-saldo" placeholder="Masukkan saldo DANA">
+          <button onclick="saveSaldoDana()">Update Saldo</button>
+          <h3>Saldo Terbaca: <span id="display-dana">Rp 0</span></h3>
+        </div>
+      </section>
+
+      <!-- 2. TABUNGAN -->
+      <section id="tabungan" class="tab-content">
+        <h2>Menu Tabungan</h2>
+        <div class="card">
+          <input type="text" id="tab-alasan" placeholder="Alasan / Target Nabung">
+          <input type="number" id="tab-nominal" placeholder="Nominal (Rp)">
+          <select id="tab-tipe">
+            <option value="setor">Setor Uang</option>
+            <option value="tarik">Tarik Uang</option>
+          </select>
+          <select id="tab-bulan">
+            <option value="Semua">Semua Bulan</option>
+            <option value="Januari">Januari</option>
+            <option value="Februari">Februari</option>
+            <option value="Maret">Maret</option>
+            <option value="April">April</option>
+            <option value="Mei">Mei</option>
+            <option value="Juni">Juni</option>
+            <option value="Juli">Juli</option>
+            <option value="Agustus">Agustus</option>
+            <option value="September">September</option>
+            <option value="Oktober">Oktober</option>
+            <option value="November">November</option>
+            <option value="Desember">Desember</option>
+          </select>
+          <button onclick="addTransaksiTabungan()">Tambah Transaksi</button>
+        </div>
+
+        <div class="card">
+          <h3>Filter & Total</h3>
+          <select id="filter-bulan" onchange="renderTabungan()">
+            <option value="Semua">Semua Bulan</option>
+            <option value="Januari">Januari</option>
+            <option value="Februari">Februari</option>
+            <option value="Maret">Maret</option>
+            <option value="April">April</option>
+            <option value="Mei">Mei</option>
+            <option value="Juni">Juni</option>
+            <option value="Juli">Juli</option>
+            <option value="Agustus">Agustus</option>
+            <option value="September">September</option>
+            <option value="Oktober">Oktober</option>
+            <option value="November">November</option>
+            <option value="Desember">Desember</option>
+          </select>
+          <h4>Total Saldo: <span id="total-tabungan">Rp 0</span></h4>
+          <ul id="list-tabungan"></ul>
+          <canvas id="chartTabungan"></canvas>
+        </div>
+      </section>
+
+      <!-- 3. CATATAN & DRAWING & FOTO -->
+      <section id="catatan" class="tab-content">
+        <h2>Catatan & Canvas</h2>
+        <div class="card">
+          <h3>Tulis Catatan</h3>
+          <input type="text" id="note-title" placeholder="Judul Catatan">
+          <textarea id="note-body" placeholder="Isi catatan..."></textarea>
+          <button onclick="saveNote()">Simpan Catatan</button>
+          <div id="notes-list"></div>
+        </div>
+
+        <div class="card">
+          <h3>Menggambar</h3>
+          <div class="controls">
+            <input type="color" id="brush-color" value="#ffffff">
+            <input type="range" id="brush-size" min="1" max="50" value="5">
+            <button onclick="setEraser()">Hapus (Eraser)</button>
+            <button onclick="clearCanvas()">Bersihkan Canvas</button>
+          </div>
+          <canvas id="paintCanvas" width="600" height="300"></canvas>
+        </div>
+
+        <div class="card">
+          <h3>Galeri Foto (Maks 100 Foto)</h3>
+          <div class="upload-box">
+            <input type="file" id="photo-input" accept="image/*">
+            <input type="text" id="photo-caption-input" placeholder="Keterangan foto (opsional)">
+            <button onclick="uploadPhoto()">Tambah Foto</button>
+          </div>
+          <p><span id="photo-count">0</span> / 100 foto tersimpan</p>
+          <div id="photo-gallery" class="gallery"></div>
+        </div>
+      </section>
+
+      <!-- 4. TRACK KALORI & MAKANAN -->
+      <section id="kalori" class="tab-content">
+        <h2>Track Kalori & Makanan</h2>
+        <div class="card">
+          <input type="text" id="food-name" placeholder="Nama Makanan (misal: Ayam Bakar)">
+          <input type="number" id="food-cal" placeholder="Kalori (kcal)">
+          <input type="text" id="food-reason" placeholder="Alasan / Catatan">
+          <button onclick="addFood()">Tambah Makanan</button>
+        </div>
+        <div class="card">
+          <h3>Frekuensi Makanan Dibeli</h3>
+          <canvas id="chartKalori"></canvas>
+          <ul id="list-makanan"></ul>
+        </div>
+      </section>
+
+      <!-- 5. TAMPILAN & THEME -->
+      <section id="tampilan" class="tab-content">
+        <h2>Kustomisasi Tampilan</h2>
+        <div class="card">
+          <h3>Pilih Background (5 Pilihan)</h3>
+          <div class="bg-options">
+            <button onclick="changeBg('https://images.unsplash.com/photo-1518709268805-4e9042af9f23')">BG 1 (Cyberpunk)</button>
+            <button onclick="changeBg('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')">BG 2 (Pantai)</button>
+            <button onclick="changeBg('https://images.unsplash.com/photo-1519681393784-d120267933ba')">BG 3 (Gunung)</button>
+            <button onclick="changeBg('https://images.unsplash.com/photo-1451187580459-43490279c0fa')">BG 4 (Space)</button>
+            <button onclick="changeBg('https://images.unsplash.com/photo-1534447677768-be436bb09401')">BG 5 (Minimalis)</button>
+          </div>
+
+          <h3>Efek Blur & Neon Cursor Glow</h3>
+          <label>Tingkat Blur Glassmorphism:</label>
+          <input type="range" id="blur-range" min="0" max="20" value="10" oninput="changeBlur(this.value)">
+          
+          <label>Warna Neon Light (Cursor/Glow):</label>
+          <input type="color" id="glow-color" value="#00ffff" onchange="changeGlowColor(this.value)">
+
+          <h3>Font Web</h3>
+          <select onchange="changeFont(this.value)">
+            <option value="sans-serif">Sans-Serif Classic</option>
+            <option value="'Courier New', monospace">Monospace Code</option>
+            <option value="'Segoe UI', sans-serif">Segoe UI Modern</option>
+          </select>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
