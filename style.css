@@ -11,6 +11,8 @@ body {
   background-size: cover;
   color: #fff;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden;
 }
 
@@ -27,33 +29,123 @@ body {
   z-index: 9999;
 }
 
-header {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(var(--blur-val));
-  padding: 1rem;
+.main-header {
   text-align: center;
-  border-bottom: 1px solid var(--glow-color);
+  padding: 2rem 1rem 1rem 1rem;
 }
 
-nav button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid transparent;
-  color: white;
-  padding: 8px 16px;
-  margin: 4px;
-  border-radius: 8px;
+.main-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  text-shadow: 0 0 15px var(--glow-color);
+}
+
+.main-header p {
+  color: #ccc;
+  margin-top: 5px;
+}
+
+/* LOBBY DISPLAY */
+.lobby-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.lobby-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 900px;
+}
+
+.lobby-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--blur-val));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 25px;
+  width: 220px;
+  text-align: center;
   cursor: pointer;
-  transition: 0.3s;
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
-nav button:hover {
+.lobby-card:hover {
+  transform: translateY(-8px);
   border-color: var(--glow-color);
-  box-shadow: 0 0 10px var(--glow-color);
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.lobby-card .icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.lobby-card h3 {
+  margin: 10px 0 5px 0;
+}
+
+.lobby-card p {
+  font-size: 0.85rem;
+  color: #bbb;
+  margin: 0;
+}
+
+/* MODAL OVERLAY (POPUP MENU) */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--glow-color);
+  box-shadow: 0 0 25px var(--glow-color);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 30px;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.btn-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  color: var(--glow-color);
 }
 
 .tab-content {
   display: none;
-  padding: 20px;
 }
 
 .tab-content.active {
@@ -61,7 +153,7 @@ nav button:hover {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(var(--blur-val));
   border-radius: 12px;
   padding: 20px;
@@ -76,6 +168,8 @@ input, select, textarea, button {
   border: 1px solid #444;
   background: rgba(0, 0, 0, 0.4);
   color: #fff;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 button {
@@ -89,9 +183,9 @@ button {
   background: #fff;
   border-radius: 8px;
   cursor: crosshair;
+  width: 100%;
 }
 
-/* Galeri Foto Styling */
 .gallery {
   display: flex;
   flex-wrap: wrap;
@@ -106,7 +200,6 @@ button {
   padding: 10px;
   width: 140px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .photo-card img {
@@ -132,15 +225,7 @@ button {
 .photo-actions button {
   font-size: 11px;
   padding: 4px 8px;
-  margin: 0;
 }
 
-.btn-edit {
-  background: #f1c40f;
-  color: #000;
-}
-
-.btn-delete {
-  background: #e74c3c;
-  color: #fff;
-}
+.btn-edit { background: #f1c40f; color: #000; }
+.btn-delete { background: #e74c3c; color: #fff; }
